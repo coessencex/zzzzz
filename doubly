@@ -1,0 +1,430 @@
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PExer01
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            //var s1 = new SinglyLinkedList();
+            //var s2 = new SinglyLinkedList();
+            //s1.AddToHead(new Node<string>("Z"));
+            //s1.AddToHead(new Node("S"));
+            //s1.AddToHead(new Node("O"));
+            //s1.AddToHead(new Node("L"));
+            //s1.AddToHead(new Node("X"));
+            //s2.AddToHead(new Node("L"));
+            //s2.AddToHead(new Node<>("O"));
+            //s2.AddToHead(new Node("X"));
+            //s2.AddToHead(new Node("Z"));
+            //s2.AddToHead(new Node("S"));
+            //sl.AddToTail(new Node("-A"));
+            //sl.DeleteFromHead();
+            //sl.PrintNode(sl);
+            //sl.AddToTail(new Node("-B"));
+            //sl.AddToTail(new Node("-C"));
+            //s1.PrintNode(s1);
+            //s2.PrintNode(s2);
+            //s1.DeleteFromTail();
+            //s1.PrintNode(s1);
+            //s2.SlComparerTestForSameNodeSameOrder(s2, s1);
+            //s2.SlComparerTestForSameNodeNoOrder(s2, s1);
+            //s1.ReverseSl(s1);
+            //s2.ReverseSl(s2);
+            //s2.Attach2Sl(s1, s2);
+            //Console.WriteLine("///////DOUBLY");
+            //var d1 = new DoublyLinkedList();
+            //d1.AddToHead(new Node("Pogi"));
+            //d1.AddToHead(new Node("AKO"));
+
+            var dl = new DoublyLinkedList<string>();
+            dl.AddToHead(new Node<string>("A"));
+            dl.AddToHead(new Node<string>("B"));
+            dl.AddToHead(new Node<string>("C"));
+            dl.AddToHead(new Node<string>("D"));
+            dl.AddToHead(new Node<string>("E"));
+
+            //DoublyLinkedList.PrintDoubleNode(dl); ////STATIC METHOD
+            dl.PrintDoubleNode();
+            var x = dl.Delete("E");
+            Console.WriteLine();
+            Console.WriteLine("DELETE WAS:{0}",x);
+            dl.PrintDoubleNode();
+
+            Console.ReadLine();
+        }
+
+
+        public class SinglyLinkedList<T>
+        {
+            public Node<T> Head { get; set; }
+            public Node<T> Tail { get; set; }
+            public int Count { get; set; }
+            public Node<T> Temp { get; set; }
+
+            public Node<T> Previous { get; set; }
+
+            //method
+            public void AddToHead(Node<T> node)
+            {
+                node.Next = Head;
+                Head = node;
+                if (Tail == null)
+                {
+                    Tail = Head;
+                }
+                Count++;
+            }
+
+            public void AddToTail(Node<T> node)
+            {
+                if (Head == null)
+                {
+                    Head = node;
+                    Tail = Head;
+
+                }
+                else
+                {
+                    Tail.Next = node;
+                    Tail = node;
+                }
+            }
+
+            public void PrintNode(SinglyLinkedList<T> singlyLinkedList)
+            {
+                Node<T> tempHeadforPN = singlyLinkedList.Head;
+                Node<T> newHeadforPN = null;
+                while (tempHeadforPN != null)
+                {
+                    Node<T> recursiving = tempHeadforPN.Next;
+                    tempHeadforPN.Next = newHeadforPN;
+                    newHeadforPN = tempHeadforPN;
+                    tempHeadforPN = recursiving;
+                }
+                singlyLinkedList.Head = newHeadforPN;
+                var temp = singlyLinkedList.Head;
+
+                while (temp != null)
+                {
+                    Console.WriteLine("{0} was added.", temp.Data);
+                    temp = temp.Next;
+                }
+                Node<T> tempHeadforoldPN = singlyLinkedList.Head;
+                Node<T> newHeadforoldPN = null;
+                while (tempHeadforoldPN != null)
+                {
+                    Node<T> recursiving = tempHeadforoldPN.Next;
+                    tempHeadforoldPN.Next = newHeadforoldPN;
+                    newHeadforoldPN = tempHeadforoldPN;
+                    tempHeadforoldPN = recursiving;
+                }
+                singlyLinkedList.Head = newHeadforoldPN;
+                var oldtemp = singlyLinkedList.Head;
+                Console.Write("Order From Head to Tail : [");
+                while (oldtemp != null)
+                {
+                    Console.Write(oldtemp.Data + "");
+                    oldtemp = oldtemp.Next;
+                }
+                Console.WriteLine("]");
+            }
+
+            public void DeleteFromHead()
+            {
+                if (Head == Tail)
+                {
+                    Tail = null;
+                }
+                var temp = Head;
+                Head = Head.Next;
+                temp = null;
+            }
+
+            public void DeleteFromTail()
+            {
+                if (Head == null)
+                {
+                    Head = null;
+                    Tail = Head;
+                }
+
+                var tmp = Head;
+                while (tmp.Next != Tail)
+                {
+                    tmp = tmp.Next;
+                }
+                Tail = tmp;
+                tmp.Next = null;
+            }
+            public void SlComparerTestForSameNodeSameOrder(SinglyLinkedList<T> s1Test, SinglyLinkedList<T> s2Test)
+            {
+                // checks if same number of Elements kek
+                int b = 0;
+                Node<T> tmp = s1Test.Head;
+                Node<T> tmp2 = s2Test.Head;
+                while (tmp != null && tmp2 != null)
+                {
+                    if (Equals(tmp.Data, tmp2.Data))
+                    {
+                        tmp = tmp.Next;
+                        tmp2 = tmp2.Next;
+                        b++;
+                    }
+                    else
+                    {
+                        b = 0;
+                        tmp = null;
+                        tmp2 = null;
+                    }
+                }
+                if (b == s1Test.Count)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("[COMPARISON] The two singly linked list have the same content and order.");
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("[COMPARISON] The two singly linked list does not have the same content and order.");
+                }
+            }
+
+            public void ReverseSl(SinglyLinkedList<T> rSl)
+            {
+                Node<T> tempHead = rSl.Head;
+                Node<T> newHead = null;
+                while (tempHead != null)
+                {
+                    Node<T> recursiving = tempHead.Next;
+                    tempHead.Next = newHead;
+                    newHead = tempHead;
+                    tempHead = recursiving;
+                }
+                rSl.Head = newHead;
+
+                var temp = rSl.Head;
+                Console.WriteLine();
+                Console.Write("[REVERSE] From Tail To Head ");
+                while (temp != null)
+                {
+                    Console.Write(temp.Data);
+                    temp = temp.Next;
+                }
+                Console.WriteLine();
+
+                //REVERSING REVERSING 
+                Node<T> tempHead2 = rSl.Head;
+                Node<T> oldHead = null;
+                while (tempHead2 != null)
+                {
+                    Node<T> recursiving = tempHead2.Next;
+                    tempHead2.Next = oldHead;
+                    oldHead = tempHead2;
+                    tempHead2 = recursiving;
+                }
+                rSl.Head = oldHead;
+
+            }
+
+            public void Attach2Sl(SinglyLinkedList<T> aSl, SinglyLinkedList<T> aSl2)
+            {
+                Node<T> tempHead = aSl2.Head;
+                Node<T> newHead = null;
+                while (tempHead != null)
+                {
+                    Node<T> recursiving = tempHead.Next;
+                    tempHead.Next = newHead;
+                    newHead = tempHead;
+                    tempHead = recursiving;
+                }
+                aSl2.Head = newHead;
+                aSl.Tail.Next = aSl2.Head;
+                var temp = aSl.Head;
+                Console.WriteLine();
+                Console.Write(
+                    "[2 linked list merged] Attached a singly linked list to the");
+                Console.ForegroundColor =
+                        ConsoleColor.Red;
+                Console.Write(" end");
+                Console.ResetColor();
+                Console.Write(" of another singly linked list ");
+                while (temp != null)
+                {
+                    Console.Write(temp.Data);
+                    temp = temp.Next;
+                }
+                Console.WriteLine();
+                Node<T> tempHeadback2Orig = aSl2.Head;
+                Node<T> newHeadback2Orig = null;
+                while (tempHeadback2Orig != null)
+                {
+                    Node<T> recursiving = tempHeadback2Orig.Next;
+                    tempHeadback2Orig.Next = newHeadback2Orig;
+                    newHeadback2Orig = tempHeadback2Orig;
+                    tempHeadback2Orig = recursiving;
+                }
+                aSl2.Head = newHeadback2Orig;
+            }
+
+            public void SlComparerTestForSameNodeNoOrder(SinglyLinkedList<T> slkek1, SinglyLinkedList<T> slkek2)
+            {
+                List<T> gg = new List<T>();
+                List<T> gg2 = new List<T>();
+                int z = 0;
+                if (slkek1.Count != slkek2.Count)
+                {
+                    Console.WriteLine("[COMPARISON (Disregard Order)] The two singly linked list does not have the same content.");
+                }
+                if (slkek1.Count == slkek2.Count)
+                {
+                    var tempogg = slkek1.Head;
+                    for (int i = 0; i < slkek1.Count; i++)
+                    {
+                        gg.Add(tempogg.Data);
+                        tempogg = tempogg.Next;
+                    }
+                    var tempogg2 = slkek2.Head;
+                    for (int i = 0; i < slkek2.Count; i++)
+                    {
+                        gg2.Add(tempogg2.Data);
+                        tempogg2 = tempogg2.Next;
+                    }
+                    var first = gg.Except(gg2).ToList();
+                    var second = gg2.Except(gg).ToList();
+                    if (first.Count != second.Count)
+                    {
+                        Console.WriteLine("[COMPARISON (Disregard Order)] The two singly linked list does not have the same contents.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[COMPARISON (Disregard Order)] The two singly linked list does have the same contents.");
+
+                    }
+                }
+            }
+        }
+        public class DoublyLinkedList<T>
+        {
+            public Node<T> Head { get; protected set; } //cant set a head 
+            public Node<T> Tail { get; protected set; }
+            public int Count { get; set; }
+
+            public DoublyLinkedList()
+            {
+                this.Head = null;
+                this.Tail = null;
+                this.Count = 0;
+            }
+            public void AddToHead(Node<T> node)
+            {
+                if (Head != null)
+                {
+                    Head.Prev = node;
+                    node.Next = Head;
+                    Head = node;
+                }
+                else
+                {
+                    Head = node;
+                    Tail = Head;
+                }
+
+            }
+
+            public void AddToTail(Node<T> node)
+            {
+                if (Tail != null)
+                {
+                    node.Prev = node;
+                    Tail.Next = Tail;
+                    Tail = node;
+
+                }
+                else
+                {
+                    Tail = node;
+                    Head = Tail;
+                }
+            }
+
+            public bool Delete(T data)
+            {
+                var tmp = Head;
+                while (tmp != null)
+                {
+                    if (tmp.Data.Equals(data))
+                    {
+                        if (tmp == Head)
+                        {
+                            DeleteFromHead();
+                        }
+                        else if (tmp == Tail)
+                        {
+                            DeleteFromTail();
+                        }
+                        else
+                        { 
+                        var newprev = tmp.Prev;
+                        var newnext = tmp.Next;
+                        newprev.Next = tmp.Next;
+                        newnext.Prev = tmp.Prev;
+                        }
+                        return true;
+                    }
+                    tmp = tmp.Next;
+                }
+                return false;
+            }
+            public void DeleteFromHead()
+            {
+
+                    Head = Head.Next;
+                    Head.Prev = null;
+                
+
+            }
+            public void DeleteFromTail()
+            {
+                Tail = Tail.Prev;
+                Tail.Next = null;
+
+            }
+
+            public  void PrintDoubleNode() { 
+                var temp = Head;
+                Console.WriteLine("Doubly set");
+                while (temp != null)
+                {
+                    Console.Write(temp.Data + " ");
+                    temp = temp.Next;
+                }
+                Console.WriteLine();
+            }
+        }
+
+    }
+    public class Node<T>
+    {
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+        public Node<T> Prev{ get; set; }
+
+        public Node()
+        {
+        }
+
+        public Node(T data)
+        {
+            Data = data;
+        }
+    }
+
+}
